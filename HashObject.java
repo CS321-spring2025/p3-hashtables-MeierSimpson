@@ -9,10 +9,10 @@ public class HashObject {
     private int frequencyCount;
     private int probeCount;
 
-    public HashObject(Object key) {
+    public HashObject(Object key, int probeCount) {
         this.key = key;
-        frequencyCount = 0;
-        probeCount = 0;
+        this.frequencyCount = 0;
+        this.probeCount = probeCount;
     }
 
     public Object getKey() {
@@ -25,10 +25,6 @@ public class HashObject {
 
     public int getFrequencyCount() {
         return frequencyCount;
-    }
-
-    public void incrementProbeCount() {
-        probeCount++;
     }
 
     public int getProbeCount() {

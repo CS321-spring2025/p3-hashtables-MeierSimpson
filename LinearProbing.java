@@ -6,17 +6,24 @@ public class LinearProbing extends Hashtable {
         }
     
         @Override
-        protected int findSlot(Object key) {
+        protected FindSlotResult findSlot(Object key) {
+            int numProbes = 0;
             int index = hash(key);
     
             for (int i = 0; i < capacity; i++) {
                 int probeIndex = (index + i) % capacity;
+                numProbes++;
     
-                if (table[probeIndex] == null || table[probeIndex].getKey().equals(key)) {
-                    return probeIndex;
+                if (table[probeIndex] == null) {
+                    return new FindSlotResult(true, probeIndex, numProbes, false);
+                }
+    
+                if (table[probeIndex].getKey().equals(key)) {
+                    return new FindSlotResult(true, probeIndex, numProbes, true);
                 }
             }
     
-            return -1;
+            return new FindSlotResult(false, -1, numProbes, false);
         }
+
 }
