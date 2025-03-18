@@ -5,11 +5,12 @@ public class DoubleHashing extends Hashtable {
     }
 
     private int primaryHash(Object key) {
-        return Math.abs(key.hashCode() % capacity);
+        return positiveMod (key.hashCode(), tableSize);
     }
 
     private int secondaryHash(Object key) {
-        return 1 + Math.abs((key.hashCode() % (capacity - 2)) % capacity);
+        return 1 + positiveMod (key.hashCode(), tableSize - 2);
+
     }
 
     @Override
@@ -18,8 +19,8 @@ public class DoubleHashing extends Hashtable {
         int index = primaryHash(key);
         int step = secondaryHash(key);
 
-        for (int i = 0; i < capacity; i++) {
-            int probeIndex = (index + i * step) % capacity;
+        for (int i = 0; i < tableSize; i++) {
+            int probeIndex = (index + i * step) % tableSize;
             numProbes++;
 
             if (table[probeIndex] == null) {

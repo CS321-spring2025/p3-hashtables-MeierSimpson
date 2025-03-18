@@ -34,7 +34,7 @@ public class HashtableExperiment {
             // Update currLoadFactor
             Object o = hashObjectSource.getNext();
             validateHashTableSizeEqual(linearProbing, doubleHashing);
-            int sizeBefore = linearProbing.getSize(); 
+            int sizeBefore = linearProbing.getNumberOfEntries(); 
             /*Prints element by element to the console with detailed output showing if the insert was successful
              or a duplicate. 
             You don’t need to modify the Hashtable class for this debug level. 
@@ -48,7 +48,7 @@ public class HashtableExperiment {
                 System.out.println("inserting " + o + " into doubleHashing hashtable: " + (doubleHashingInsertResult ? "Success" : "Duplicate"));
             }
             validateHashTableSizeEqual(linearProbing, doubleHashing);
-            int sizeAfter = linearProbing.getSize(); 
+            int sizeAfter = linearProbing.getNumberOfEntries(); 
             
             currLoad = sizeAfter;
         }
@@ -81,9 +81,9 @@ HashtableExperiment: size of hash table is 47896
 
     private void outputHashtable(String name, String fileName, Hashtable hashtable) throws FileNotFoundException {
         System.out.println("\tUsing " + name);
-        System.out.println("HashtableExperiment: size of hash table is " + hashtable.getSize());
+        System.out.println("HashtableExperiment: size of hash table is " + hashtable.getNumberOfEntries());
         System.out.println("\tInserted " + hashtable.getTotalInserts() + " elements, of which " + hashtable.getTotalDuplicateInserts() + " were duplicates");
-        System.out.println("\tAvg. no. of probes = " + hashtable.getAvgNumProbes());
+        System.out.println("\tAvg. no. of probes = " + String.format("%.2f", hashtable.getAvgNumProbes()));
         // HashtableExperiment: Saved dump of hash table
         if (debugLevel == 1) {
             writeHashTableToFile(fileName, hashtable);
@@ -93,7 +93,7 @@ HashtableExperiment: size of hash table is 47896
 
     private void writeHashTableToFile(String filename, Hashtable hashtable) throws FileNotFoundException {
         PrintWriter out = new PrintWriter(filename);
-        for(int i = 0; i < hashtable.getSize(); i++) {
+        for(int i = 0; i < hashtable.getTableSize(); i++) {
             HashObject hashObject = hashtable.getHashObject(i);
             // table[11]: mansfield 5 1
             if (hashObject != null) {
@@ -118,8 +118,8 @@ HashtableExperiment: size of hash table is 47896
     }
 
     private void validateHashTableSizeEqual(Hashtable h1, Hashtable h2) throws Exception {
-        if (h1.getSize() == h2.getSize()) {
-            throw new Exception("Unexpected: linearProbeSizeand doubleHashingSizeexpected to be the same.\n");
+        if (h1.getNumberOfEntries() != h2.getNumberOfEntries()) {
+            throw new Exception("Unexpected: linearProbeSize and doubleHashingSizeexpected to be the same.\n");
         }
     }
 
@@ -139,16 +139,16 @@ HashtableExperiment: size of hash table is 47896
 
      public static void main(String[] args) throws Exception {
         int debugLevel = 0;
-        if(args.length == 4) {
-            String debugLevelString = args[3];
+        if(args.length == 3) {
+            String debugLevelString = args[2];
             debugLevel = Integer.parseInt(debugLevelString);
         }
         HashtableExperiment app = new HashtableExperiment(debugLevel);
-        if (args.length < 3 || args.length > 4) {
+        if (args.length < 2 || args.length > 3) {
            app.showUsage();
         }
-        String dataSourceString = args[1];
-        String loadFactorString = args[2];
+        String dataSourceString = args[0];
+        String loadFactorString = args[1];
         app.run(dataSourceString, loadFactorString);
     }
     

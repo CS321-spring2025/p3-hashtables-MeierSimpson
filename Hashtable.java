@@ -12,14 +12,14 @@
 
  public abstract class Hashtable {
     protected HashObject[] table;
-    protected int capacity;
-    protected int size;
+    protected int tableSize;
+    protected int numberOfEntries;
     private int totalInserts;
 
 
     public Hashtable(int capacity) {
-        this.capacity = capacity;
-        this.size = 0;
+        this.tableSize = capacity;
+        this.numberOfEntries = 0;
         this.table = new HashObject[capacity];
         this.totalInserts = 0;
     }
@@ -27,7 +27,7 @@
     
     public int getNewInsertProbes() {
         int newInsertProbes = 0;
-        for(int i =0; i<capacity; i++) {
+        for(int i =0; i<tableSize; i++) {
             if (table[i] != null)
               newInsertProbes+= table[i].getProbeCount();
         }
@@ -36,7 +36,7 @@
 
     public int getTotalDuplicateInserts() {
         int newInsertProbes = 0;
-        for(int i =0; i<capacity; i++) {
+        for(int i =0; i<tableSize; i++) {
             if (table[i] != null)
               newInsertProbes+= table[i].getFrequencyCount();
         }
@@ -53,13 +53,19 @@
     }
 
     public double getAvgNumProbes() {
-        double retVal = getNewInsertProbes() / size;
+        double retVal = ((double)getNewInsertProbes()) / ((double)numberOfEntries);
         return retVal;
     }
 
-    protected int hash(Object key) {
-        return Math.abs(key.hashCode() % capacity);
+    protected int positiveMod (int dividend, int divisor) {
+        int quotient = dividend % divisor;
+        if (quotient < 0)
+        quotient += divisor;
+        return quotient;
     }
+        
+
+    
 
     public boolean insert(Object key) {
         
@@ -70,8 +76,10 @@
 
         totalInserts++;
         if (table[index] == null) {
-            table[index] = new HashObject(key, probeCount);
-            size++;
+            HashObject hashObject = new HashObject(key, probeCount);
+            hashObject.incrementFrequencyCount();
+            table[index] = hashObject;
+            numberOfEntries++;
             return true;
         } else {
             HashObject hashObject = table[index];
@@ -86,8 +94,12 @@
         return (index != -1) ? table[index].getKey() : null;
     }
 
-    public int getSize() {
-        return size;
+    public int getNumberOfEntries() {
+        return numberOfEntries;
+    }
+
+    public int getTableSize() {
+        return tableSize;
     }
 
     // Abstract method to be implemented in subclasses
